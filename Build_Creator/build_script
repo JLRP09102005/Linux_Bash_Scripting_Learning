@@ -1,0 +1,45 @@
+#!/bin/bash
+
+write_symbol="❓ -"
+welcome_user="Hello, you're welcome"
+enter_program_ask="[1.-Continue / 0.-Exit]"
+blank_echo=""
+
+firstline=$(head -n 1 ./source/changelog.md)
+read -a splitfirstline <<< $firstline
+version=${splitfirstline[1]}
+
+echo "$blank_echo"
+echo "$enter_program_ask"
+echo -n "$write_symbol"
+read versioncontinue
+
+if [ $versioncontinue -eq 1 ]
+then
+  for archive in source/*
+  do
+    cp $archive build/
+    echo "📥 Copied: $archive"
+
+    if [ $archive == "source/secretinfo.md" ]
+    then
+      sed -n 's/42/XX/g' build/secretinfo.md
+    fi
+  done
+
+  cd build/
+  echo "$blank_echo"
+  echo "‼️ NEXT FILES WERE MOVED TO BUILD DIRECTORY $version"
+  echo "$blank_echo"
+
+  for archive in *
+  do
+    echo "📄 $archive"
+  done
+
+  cd ../
+else
+ echo "Please come back when you are ready"
+fi
+
+echo "$blank_echo"
