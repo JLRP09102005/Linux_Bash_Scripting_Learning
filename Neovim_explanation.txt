@@ -1,0 +1,36 @@
+🔥 COMANDOS DE SUPERVIVENCIA (memoriza estos):
+
+MODO NORMAL (por defecto):
+- i          → Insertar texto
+- Esc        → Volver a NORMAL
+- :w         → Guardar
+- :q         → Salir
+- :wq        → Guardar y salir
+- :q!        → Salir sin guardar
+- dd         → Eliminar línea
+- yy         → Copiar línea
+- p          → Pegar
+- u          → Deshacer
+- Ctrl+r     → Rehacer
+- /texto     → Buscar
+- gg         → Ir al inicio
+- G          → Ir al final
+--------------------------------------------
+NAVEGACIÓN RÁPIDA:
+- h j k l    → ← ↓ ↑ →
+- w b        → Palabra siguiente/anterior
+- 0 $        → Inicio/final de línea
+- f{char}    → Buscar carácter en línea
+------------------------------------------
+EDICIÓN NINJA:
+- dw         → Eliminar palabra
+- cw         → Cambiar palabra
+- x          → Eliminar carácter
+- r{char}    → Reemplazar carácter
+- o          → Nueva línea abajo e INSERT
+- O          → Nueva línea arriba e INSERT
+---------------------------------------------
+BUSCAR Y REEMPLAZAR:
+- /patrón    → Buscar
+- n N        → Siguiente/anterior
+- :%s/viejo/nuevo/g → Reemplazar todo
