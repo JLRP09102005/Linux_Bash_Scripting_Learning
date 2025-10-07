@@ -1,0 +1,1 @@
+This script receives a Folder as a paremeter to access and organize the files using their extensions
