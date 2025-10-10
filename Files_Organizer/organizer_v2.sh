@@ -5,6 +5,12 @@ currentPath=$(pwd)
 
 echo "Write the extensions to organize (separated by ",")"
 echo "Example: .txt,.mp4,.mp3"
-read -ra extensions
+read -p "> " input
 
-IFS=',' read -ra extensions
+IFS=',' read -ra extensions <<< "$input"
+
+echo ""
+echo "Organizando archivos..."
+echo ""
+
+echo "${extensions[0]}"
