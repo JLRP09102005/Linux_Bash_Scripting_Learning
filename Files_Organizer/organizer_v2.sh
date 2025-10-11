@@ -27,11 +27,10 @@ else
     do
         ext=$(echo "$ext" | tr -d ' ' | tr -d '.')
 
-        extDirectory="$currentPath/${ext}_files"
-        mkdir -p "$extDirectory"
-
         if ls "$filesPath"/*."${ext}" 1> /dev/null 2> /dev/null
         then
+            extDirectory="$currentPath/${ext}_files"
+            mkdir -p "$extDirectory"
             mv "$filesPath"/*."${ext}" "$extDirectory"
         fi
     done
