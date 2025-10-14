@@ -28,6 +28,13 @@ else
 
         echo "Write the directories path to back up"
         echo "**Example: Desktop/Github,home/bin"
-        read -p ">  " directoriesPath
+        read -p ">  " directories
+
+        IFS=',' read -ra directoriesPath <<< "$directories"
+
+        for directory in "${directoriesPath[@]}"
+        do
+            echo "$directory"
+        done
     fi
 fi
