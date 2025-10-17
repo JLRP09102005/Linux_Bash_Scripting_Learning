@@ -22,19 +22,20 @@ else
     if [ $# -lt 5 ]
     then
         echo "The script needs at least 5 arguments to work"
+        echo "Usage: $0 'minutes' 'hours' 'day' 'month' 'weekday'"
     else
-        minutes=$1
-        hours=$2
-        monthDays=$3
-        months=$4
-        weekDays=$5
+        minutes="$1"
+        hours="$2"
+        monthDays="$3"
+        months="$4"
+        weekDays="$5"
         scriptPath="/home/jozelu/Desktop/GitHub/Linux_Bash_Scripting_Learning/Backup_Creator/backup-cron-task.sh"
 
         echo "Write the directories path to back up"
         echo "**Example: Desktop/Github,home/bin"
         read -p ">  " directories
 
-        "$directories" | tr -d ' '
+        directories=$("$directories" | tr -d ' ')
         crontabString="$minutes $hours $monthDays $months $weekDays bash $scriptPath \"$directories\""
         (sudo crontab -l 2>/dev/null; echo "$crontabString") | sudo crontab -
     fi
