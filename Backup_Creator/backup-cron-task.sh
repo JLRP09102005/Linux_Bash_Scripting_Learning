@@ -1,5 +1,5 @@
 #!/bin/bash
-backupsPath="/home/jozelu/Backups"
+backupsPath="/home/$(whoami)/Backups"
 
 if [ $# -lt 1 ]
 then
@@ -10,11 +10,16 @@ else
 
     for directory in "${directoriesPath[@]}"
     do
-        sudo mkdir -p "$backupsPath"
+        mkdir -p "$backupsPath"
 
         if [ -e "$directory" ]
         then
-            sudo cp -r "$directory" "$backupsPath"
+            nombreArchivo="$(basename $directory)_$(date +%Y-%m-%d_%H-%M-%S)"
+            newFilePath="$backupsPath/$nombreArchivo"
+            directory="${directory%/}"
+
+            cp -r "$directory" "$newFilePath"
+            echo "Backup of $directory saved to $newFilePath"
         else
             echo "backup-cron-task couldn't find backup directory"
         fi
