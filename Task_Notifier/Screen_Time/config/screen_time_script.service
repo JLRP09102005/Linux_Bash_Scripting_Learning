@@ -1,0 +1,10 @@
+[Unit]
+Description=Screen Time Notifier
+
+[Service]
+Type=simple
+ExecStart=execStart
+Restart=on-failure
+
+[Install]
+WantedBy=wantedby

@@ -1,0 +1,9 @@
+[Unit]
+Description=Screen Time Notifier Timer
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=timeperexecute
+
+[Install]
+WantedBy=wantedby
