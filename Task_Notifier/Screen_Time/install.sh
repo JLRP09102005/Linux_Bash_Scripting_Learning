@@ -1,13 +1,36 @@
 #!/bin/bash
 
+######################################
+# VARIABLES
+######################################
+
+isRootUser=false
+userPath=""
+serviceCopiedPath=""
+timerCopiedPath=""
+
+######################################
 ## FUNCTIONS
+######################################
+
 ErrorExit()
 {
     echo "ERROR: $1" >&2
     exit ${2:-1}
 }
 
+# arg1(executed by root or user)
 ModifyServiceArchives()
+{
+    if [ "$1" -eq 1 ]
+    then
+        echo "Modificar archivos para que sean de root"
+    else
+        echo "Modificar archivos para que sean de usuario"
+    fi
+}
+
+CopyServiceArchives()
 {
     if [ "$installLocation" == "1" -a "$isRootUser" == "true" ]
     then
@@ -20,13 +43,28 @@ ModifyServiceArchives()
     fi
 }
 
-CopyServiceArchives()
+# arg1(install location)
+GetInstalationPath()
 {
-    echo "copiar los archivos en el paz"
+
+
+    if [ "$userPath" == "" ]
+    then
+        if [ "$1" -eq 1 ]
+        then
+            echo "instalacion en sistema"
+        else
+            echo "instalacion en usuario"
+        fi
+    else
+        return "$userPath"
+    fi
 }
 
-## CODE
-isRootUser=false
+######################################
+## MAIN SCRIPT
+######################################
+
 if [ "$(whoami)" == "root" ]
 then
     isRootUser=true
@@ -58,4 +96,4 @@ then
     #Comprobar si es un path o el path existe
 fi
 
-ModifyServiceArchives
+CopyServiceArchives
