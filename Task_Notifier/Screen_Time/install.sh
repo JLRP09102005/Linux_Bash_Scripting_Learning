@@ -4,25 +4,30 @@
 # VARIABLES
 ######################################
 
-isRootUser=false
+scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" ## Optiene el path en el cual se encuentra el script principal ejecutado
 userPath=""
-serviceCopiedPath=""
-timerCopiedPath=""
+serviceFinalPath=""
+timerFinalPath=""
+serviceOrigin="$scriptPath/config/screen_time_script.service"
+timerOrigin="$scriptPath/config/screen_time_script.timer"
+defaultInstallPath_user="/home/$(whoami)/.config/systemd/user/"
+defaultInstallPath_system="/etc/systemd/system/"
+isRootUser=false
 
 ######################################
-## FUNCTIONS
+# FUNCTIONS
 ######################################
 
 ErrorExit()
 {
     echo "ERROR: $1" >&2
-    exit ${2:-1}
+    exit "${2:-1}"
 }
 
 # arg1(executed by root or user)
 ModifyServiceArchives()
 {
-    if [ "$1" -eq 1 ]
+    if [ "$isRootUser" == "true" ]
     then
         echo "Modificar archivos para que sean de root"
     else
@@ -32,37 +37,40 @@ ModifyServiceArchives()
 
 CopyServiceArchives()
 {
-    if [ "$installLocation" == "1" -a "$isRootUser" == "true" ]
+    if [ "$installLocation" == "1" -a "$isRootUser" == "false" ]
     then
-        echo "copiar en sistema"
-    elif [ "$installLocation" == "2" ]
-    then
-        echo "instalar usuario"
-    else
         ErrorExit "Can't create the service in a system folder without root privilegies"
     fi
+
+    instalationPath="$(GetInstalationPath "$installLocation")"
+
+    cp -i "$serviceOrigin" "$instalationPath"
+    serviceFinalPath="$instalationPath/$(basename "$serviceOrigin")"
+
+    cp -i "$timerOrigin" "$instalationPath"
+    timerFinalPath="$instalationPath/$(basename "$timerOrigin")"
 }
 
-# arg1(install location)
+# arg1(install location 1-system 2-user)
 GetInstalationPath()
 {
-
-
     if [ "$userPath" == "" ]
     then
         if [ "$1" -eq 1 ]
         then
-            echo "instalacion en sistema"
+            makdir -p "$defaultInstallPath_system"
+            echo "$defaultInstallPath_system"
         else
-            echo "instalacion en usuario"
+            mkdir -p "$defaultInstallPath_user"
+            echo "$defaultInstallPath_user"
         fi
     else
-        return "$userPath"
+        echo "$userPath"
     fi
 }
 
 ######################################
-## MAIN SCRIPT
+# MAIN SCRIPT
 ######################################
 
 if [ "$(whoami)" == "root" ]
