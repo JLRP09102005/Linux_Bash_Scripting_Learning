@@ -3,7 +3,7 @@ Description=Screen Time Notifier
 
 [Service]
 Type=simple
-ExecStart=execStart
+ExecStart=execstart
 Restart=on-failure
 
 [Install]

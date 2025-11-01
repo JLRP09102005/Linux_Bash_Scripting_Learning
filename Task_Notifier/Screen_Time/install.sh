@@ -5,13 +5,20 @@
 ######################################
 
 scriptPath="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" ## Optiene el path en el cual se encuentra el script principal ejecutado
+mainScriptPath="$(realpath screen_time_notifier.sh)"
+
 userPath=""
 serviceFinalPath=""
 timerFinalPath=""
+scriptFinalPath=""
+
 serviceOrigin="$scriptPath/config/screen_time_script.service"
 timerOrigin="$scriptPath/config/screen_time_script.timer"
-defaultInstallPath_user="/home/$(whoami)/.config/systemd/user/"
-defaultInstallPath_system="/etc/systemd/system/"
+
+defaultInstallPath_user="/home/$(whoami)/.config/systemd/user"
+defaultInstallPath_system="/etc/systemd/system"
+defaultInstallPath_script="/usr/local/bin"
+
 isRootUser=false
 
 ######################################
@@ -27,11 +34,14 @@ ErrorExit()
 # arg1(executed by root or user)
 ModifyServiceArchives()
 {
+    sed -i "s|timeperexecute|$serviceTime|g" "$timerFinalPath"
+    sed -i "s|execstart|$scriptFinalPath|g" "$serviceFinalPath"
+
     if [ "$isRootUser" == "true" ]
     then
-        echo "Modificar archivos para que sean de root"
+        sed -i 's|wantedby|multi-user.target|g' "$serviceFinalPath" "$timerFinalPath"
     else
-        echo "Modificar archivos para que sean de usuario"
+        sed -i 's|wantedby|default.target|g' "$serviceFinalPath" "$timerFinalPath"
     fi
 }
 
@@ -49,6 +59,9 @@ CopyServiceArchives()
 
     cp -i "$timerOrigin" "$instalationPath"
     timerFinalPath="$instalationPath/$(basename "$timerOrigin")"
+
+    cp -i "$mainScriptPath" "defaultInstallPath_script"
+    scriptFinalPath="$defaultInstallPath_script/$(basename "$mainScriptPath")"
 }
 
 # arg1(install location 1-system 2-user)
@@ -88,12 +101,15 @@ then
     ErrorExit "Type no valid at Install Location"
 fi
 
-echo "Set time in minutes"
+echo "Set time in minutes (Ex. 10)"
 read -p "> " serviceTime
 if [[ ! "$serviceTime" =~ ^[0-9]+$ ]]
 then
     ErrorExit "The time set was not in the correct type"
 fi
+# Agregar la extension de min al numero elegido por el usuario
+serviceTime=$(echo "$serviceTime" | xargs)
+serviceTime+="min"
 
 echo "Install default location?(y/n)"
 read -p "> " installDefaultAnswer
@@ -101,7 +117,7 @@ if [ "$installDefaultAnswer" == "no" -o "$installDefaultAnswer" == "n" ]
 then
     echo "Write path instalation"
     read -p "> " userPath
-    #Comprobar si es un path o el path existe
 fi
 
 CopyServiceArchives
+ModifyServiceArchives
