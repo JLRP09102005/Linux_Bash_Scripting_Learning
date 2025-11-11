@@ -36,11 +36,11 @@ ModifyTimer()
 DisableTimer()
 {
     if [ "$isRootUser" == "root" ]; then
-        sudo systemctl stop "$(basename "$timerPath")"
-        sudo systemctl stop "$(basename "$servicePath")"
+        sudo systemctl stop "$(basename timerPath)"
+        sudo systemctl stop "$(basename servicePath)"
     else
-        systemctl --user stop "$(basename "$timerPath")"
-        systemctl --user stop "$(basename "$servicePath")"
+        systemctl --user stop "$(basename timerPath)"
+        systemctl --user stop "$(basename servicePath)"
     fi
 }
 

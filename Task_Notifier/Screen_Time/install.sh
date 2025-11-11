@@ -82,6 +82,17 @@ GetInstalationPath()
     fi
 }
 
+StartServices()
+{
+    if [ "$isRootUser" == "true" ]; then
+        sudo systemctl start "$(basename "$timerFinalPath")"
+        sudo systemctl start "$(basename "$serviceFinalPath")"
+    else
+        systemctl --user start "$(basename "$timerFinalPath")"
+        systemctl --user start "$(basename "$serviceFinalPath")"
+    fi
+}
+
 ######################################
 # MAIN SCRIPT
 ######################################
@@ -121,3 +132,4 @@ fi
 
 CopyServiceArchives
 ModifyServiceArchives
+StartServices
