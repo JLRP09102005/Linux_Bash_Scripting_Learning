@@ -87,10 +87,17 @@ StartServices()
     if [ "$isRootUser" == "true" ]; then
         sudo systemctl start "$(basename "$timerFinalPath")"
         sudo systemctl start "$(basename "$serviceFinalPath")"
+        sudo systemctl daemon-reload
     else
         systemctl --user start "$(basename "$timerFinalPath")"
         systemctl --user start "$(basename "$serviceFinalPath")"
+        systemctl --user daemon-reload
     fi
+}
+
+GivePermissions()
+{
+    chmod 101 "$scriptFinalPath"
 }
 
 ######################################
@@ -132,4 +139,5 @@ fi
 
 CopyServiceArchives
 ModifyServiceArchives
+#GivePermissions
 StartServices
