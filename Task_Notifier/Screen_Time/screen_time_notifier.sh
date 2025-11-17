@@ -77,6 +77,7 @@ answer=$(notify-send -w \
 -A "$option1=Restart Timer" \
 -A "$option2=Modify Timer" \
 -A "$option3=Disable Timer" \
+-A "dismissTimer=Dismiss" \
 -u "critical")
 
 if [ "$answer" == "$option1" ]; then
