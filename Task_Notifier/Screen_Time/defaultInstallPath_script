@@ -30,20 +30,7 @@ GetServicePaths()
 ModifyTimer()
 {
     read -p "New Timer time in min > " newTimer
-    sed -i "s|OnUnitActiveSec=.*|OnUnitActiveSec=${newTimer}min|" "$timerPath"
-
-    RestartTimer
-}
-
-RestartTimer()
-{
-    if [ "$isRootUser" == "true" ]; then
-        sudo systemctl daemon-reload
-        sudo systemctl restart screen_time_script.timer
-    else
-        systemctl --user daemon-reload
-        systemctl --user restart screen_time_script.timer
-    fi
+    sed -i "s|OnUnitActiveSec=.*|OnUnitActiveSec=${newTimer}min" timerPath
 }
 
 DisableTimer()
@@ -62,10 +49,6 @@ DisableTimer()
 ###################################
 GetServicePaths
 
-if [ "$1" == "--modify" ]; then
-    ModifyTimer
-fi
-
 if [ "$(whoami)" == "root" ]; then
     isRootUser="true"
 fi
@@ -80,13 +63,10 @@ answer=$(notify-send -w \
 -u "critical")
 
 if [ "$answer" == "$option1" ]; then
-    RestartTimer
+    echo "option 1"
 elif [ "$answer" == "$option2" ]; then
-    if [ "$isRootUser" == "true" ]; then
-        sudo x-terminal-emulator -e bash -c "$0 --modify"
-    else
-        x-terminal-emulator -e bash -c "$0 --modify"
-    fi
+    GetServicePaths
+    ModifyTimer
 elif [ "$answer" == "$option3" ]; then
     GetServicePaths
     DisableTimer

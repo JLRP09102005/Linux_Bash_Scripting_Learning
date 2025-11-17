@@ -1,4 +1,5 @@
 #!/bin/bash
+###set -euo pipefail
 
 ######################################
 # VARIABLES
@@ -15,9 +16,8 @@ scriptFinalPath=""
 serviceOrigin="$scriptPath/config/screen_time_script.service"
 timerOrigin="$scriptPath/config/screen_time_script.timer"
 
-defaultInstallPath_user="/home/$(whoami)/.config/systemd/user"
-defaultInstallPath_system="/etc/systemd/system"
-defaultInstallPath_script="/usr/local/bin"
+defaultInstallPath_user=("/home/$(whoami)/.config/systemd/user" "/home/$(whoami)/.local/bin")
+defaultInstallPath_system=("/etc/systemd/system" "/usr/local/bin")
 
 isRootUser=false
 
@@ -52,16 +52,17 @@ CopyServiceArchives()
         ErrorExit "Can't create the service in a system folder without root privilegies"
     fi
 
-    instalationPath="$(GetInstalationPath "$installLocation")"
+    instalationPathArray=($(GetInstalationPath "$installLocation"))
 
-    cp -i "$serviceOrigin" "$instalationPath"
-    serviceFinalPath="$instalationPath/$(basename "$serviceOrigin")"
+    cp -i "$serviceOrigin" "${instalationPathArray[0]}"
+    serviceFinalPath="${instalationPathArray[0]}/$(basename "$serviceOrigin")"
 
-    cp -i "$timerOrigin" "$instalationPath"
-    timerFinalPath="$instalationPath/$(basename "$timerOrigin")"
+    cp -i "$timerOrigin" "${instalationPathArray[0]}"
+    timerFinalPath="${instalationPathArray[0]}/$(basename "$timerOrigin")"
 
-    cp -i "$mainScriptPath" "defaultInstallPath_script"
-    scriptFinalPath="$defaultInstallPath_script/$(basename "$mainScriptPath")"
+    cp -i "$mainScriptPath" "${instalationPathArray[1]}"
+    scriptFinalPath="${instalationPathArray[1]}/$(basename "$mainScriptPath")"
+
 }
 
 # arg1(install location 1-system 2-user)
@@ -71,11 +72,17 @@ GetInstalationPath()
     then
         if [ "$1" -eq 1 ]
         then
-            makdir -p "$defaultInstallPath_system"
-            echo "$defaultInstallPath_system"
+            for i in "${defaultInstallPath_system[@]}"
+            do
+                mkdir -p "$i"
+            done
+            echo "${defaultInstallPath_system[@]}"
         else
-            mkdir -p "$defaultInstallPath_user"
-            echo "$defaultInstallPath_user"
+            for i in "${defaultInstallPath_user[@]}"
+            do
+                mkdir -p "$i"
+            done
+            echo "${defaultInstallPath_user[@]}"
         fi
     else
         echo "$userPath"
