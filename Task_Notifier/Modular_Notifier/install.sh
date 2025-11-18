@@ -1,5 +1,10 @@
 #!/bin/bash
 
+####################################
+## IDEAS
+####################################
+#1.-Para montar los archivos hacer alguna funcion estilo for que pase por todo lo que tiene que escribir y la llamada sea algo como (funcion "$unit_section" "enter" "$description{$inputUsuario}" ")
+
 #################################################
 ## MODULAR BLOCKS
 #################################################
@@ -20,14 +25,15 @@ wanted_by="WantedBy="
 ## VARIABLES
 ########################################
 isRootUser="false"
-checker_boolean=""
+dialog_separator="echo """
 
 ######################################
 ## FUNCTIONS
 ######################################
 ErrorExit()
 {
-    echo "error"
+    echo "ERROR: $1" >&2
+    exit "${2:-1}"
 }
 
 CheckRootPrivilegies()
@@ -48,16 +54,44 @@ CheckOnlyNumbers()
     fi
 }
 
+ServiceFilesCreator()
+{
+    echo "menudo vago soy"
+}
+
 ##############################################
 ## MAIN SCRIPT
 ##############################################
 CheckRootPrivilegies
 
+$dialog_separator
 echo "Select service type to create (write the option number)"
 echo "  1.-Notification by timer"
-read -pr "> " serviceOption
+read -p "> " serviceOption
+$dialog_separator
 
-checker_boolean="$(CheckOnlyNumbers "$serviceOption")"
-if [ "$checker_boolean" == "false" ]; then
-    ErrorExit
+if [ "$(CheckOnlyNumbers "$serviceOption")" == "false" ]; then
+    ErrorExit "Input contains no number characters"
+fi
+
+if [ "$serviceOption" -eq 1 ]; then
+
+    $dialog_separator
+    echo "Select notification type"
+    echo "  1.-Screen use notification"
+    read -p "> " notificationOption
+    $dialog_separator
+
+    if [ "$(CheckOnlyNumbers "$notificationOption")" == "false" ]; then
+        ErrorExit "Input contains no number characters"
+    fi
+
+    if [ "$notificationOption" -eq 1 ]; then
+        echo "algo"
+    else
+        ErrorExit "Option selected no valid"
+    fi
+
+else
+    ErrorExit "Option selected no valid"
 fi
