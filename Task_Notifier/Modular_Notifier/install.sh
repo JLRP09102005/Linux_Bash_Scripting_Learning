@@ -36,7 +36,7 @@ user_scripts_installation_path=""
 ###############################################
 ## SCRIPT NAMES
 ###############################################
-screen_time_notifier_timer="screen_time_notifier_timer.sh"
+screen_time_notifier_timer_scriptname="screen_time_notifier_timer.sh"
 
 ######################################
 ## FUNCTIONS
@@ -70,38 +70,55 @@ ServiceFilesCreator()
     echo "menudo vago soy"
 }
 
-ServiceNotificationTimerScreenBuild()
+ScreenNotificationTimerBuildService()
 {
     local unit_description
     local service_type
     local service_exec_start
     local service_restart
+    local service_wanted_by
+
+    if [ "$isRootUser" == "true" ]; then
+        service_exec_start="${scripts_installation_path[0]}/$screen_time_notifier_timer_scriptname"
+        service_wanted_by="multi-user.target"
+    else
+        service_exec_start="${scripts_installation_path[1]}/$screen_time_notifier_timer_scriptname"
+        service_wanted_by="default.target"
+    fi
 
     $dialog_separator
-    read -e -i "Screen Time Notifier Timer" -p "Service Description: " unit_description
+    read -e -i "Screen Time Notifier Service" -p "Service Description: " unit_description
     read -e -i "simple" -p "Type: " service_type
-    read -e -i "execstart" -p "ExecStart: " service_exec_start
+    echo "ExecStart: $service_exec_start"
     read -e -i "on-failure" -p "Restart: " service_restart
-    read -e -i ""
+    echo "WantedBy: $service_wanted_by"
+    $dialog_separator
+
+}
+
+ScreenNotificationTimerBuildTimer()
+{
+    local unit_description
+    local timer_on_boot_sec
+    local timer_on_unit_active_sec
+    local install_wanted_by
+
+    if [ "$isRootUser" == true ]; then
+        install_wanted_by="multi-user.target"
+    else
+        install_wanted_by="default.target"
+    fi
+
+    $dialog_separator
+    read -e -i "Screen Time Notifier Timer" -p "Description: " unit_description
+    read -e -i "1min" -p "OnBootSec: " timer_on_boot_sec
+    read -e -i "20min" -p "OnUnitActiveSec: " timer_on_unit_active_sec
+    echo "WantedBy: $install_wanted_by"
 
 }
 
 ##############################################
-## MAIN SCRIPTServiceNotificationTimerScreenBuild()
-{
-    local unit_description
-    local service_type
-    local service_exec_start
-    local service_restart
-
-    $dialog_separator
-    read -e -i "Screen Time Notifier Timer" -p "Service Description: " unit_description
-    read -e -i "simple" -p "Type: " service_type
-    read -e -i "execstart" -p "ExecStart: " service_exec_start
-    read -e -i "on-failure" -p "Restart: " service_restart
-    read -e -i ""
-
-}
+## MAIN SCRIPT
 ##############################################
 CheckRootPrivilegies
 
@@ -142,7 +159,7 @@ if [ "$serviceOption" -eq 1 ]; then
     if [ "$notificationOption" -eq 1 ]; then
 
         echo "Creating the service that executes the notification script..."
-        ServiceNotificationTimerScreenBuild
+        ScreenNotificationTimerBuildService
     
     else
         ErrorExit "Option selected no valid"
