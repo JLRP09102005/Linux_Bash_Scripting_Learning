@@ -26,6 +26,17 @@ wanted_by="WantedBy="
 ########################################
 isRootUser="false"
 dialog_separator="echo """
+build_archive_result=""
+
+services_installation_path=("/etc/systemd/system" "/home/$(whoami)/.config/systemd/user")
+scripts_installation_path=("/usr/local/bin" "home/$(whoami)/.local/bin")
+user_services_installation_path=""
+user_scripts_installation_path=""
+
+###############################################
+## SCRIPT NAMES
+###############################################
+screen_time_notifier_timer="screen_time_notifier_timer.sh"
 
 ######################################
 ## FUNCTIONS
@@ -59,11 +70,42 @@ ServiceFilesCreator()
     echo "menudo vago soy"
 }
 
+ServiceNotificationTimerScreenBuild()
+{
+    local unit_description
+    local service_type
+    local service_exec_start
+    local service_restart
+
+    $dialog_separator
+    read -e -i "Screen Time Notifier Timer" -p "Service Description: " unit_description
+    read -e -i "simple" -p "Type: " service_type
+    read -e -i "execstart" -p "ExecStart: " service_exec_start
+    read -e -i "on-failure" -p "Restart: " service_restart
+    read -e -i ""
+
+}
+
 ##############################################
-## MAIN SCRIPT
+## MAIN SCRIPTServiceNotificationTimerScreenBuild()
+{
+    local unit_description
+    local service_type
+    local service_exec_start
+    local service_restart
+
+    $dialog_separator
+    read -e -i "Screen Time Notifier Timer" -p "Service Description: " unit_description
+    read -e -i "simple" -p "Type: " service_type
+    read -e -i "execstart" -p "ExecStart: " service_exec_start
+    read -e -i "on-failure" -p "Restart: " service_restart
+    read -e -i ""
+
+}
 ##############################################
 CheckRootPrivilegies
 
+## Select service type
 $dialog_separator
 echo "Select service type to create (write the option number)"
 echo "  1.-Notification by timer"
@@ -74,6 +116,17 @@ if [ "$(CheckOnlyNumbers "$serviceOption")" == "false" ]; then
     ErrorExit "Input contains no number characters"
 fi
 
+$dialog_separator
+read -p "Install on default path?(y/n)> " isUsingDefaultPath
+$dialog_separator
+
+if [[ "$isUsingDefaultPath" == "n" || "$isUsingDefaultPath" == "no" ]]; then
+    echo "pedir el nuevo path de cada cosa"
+elif [[ "$isUsingDefaultPath" != "y" && "$isUsingDefaultPath" != "yes" ]]; then
+    ErrorExit "Input dont match with the correct format"
+fi
+
+## Select notification by timer option
 if [ "$serviceOption" -eq 1 ]; then
 
     $dialog_separator
@@ -87,7 +140,10 @@ if [ "$serviceOption" -eq 1 ]; then
     fi
 
     if [ "$notificationOption" -eq 1 ]; then
-        echo "algo"
+
+        echo "Creating the service that executes the notification script..."
+        ServiceNotificationTimerScreenBuild
+    
     else
         ErrorExit "Option selected no valid"
     fi
