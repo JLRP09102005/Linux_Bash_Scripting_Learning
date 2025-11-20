@@ -8,6 +8,7 @@
 #################################################
 ## MODULAR BLOCKS
 #################################################
+separation=""
 unit_section="[Unit]"
 service_section="[Service]"
 timer_section="[Timer]"
@@ -29,15 +30,17 @@ dialog_separator="echo """
 build_archive_result=""
 
 services_installation_path=("/etc/systemd/system" "/home/$(whoami)/.config/systemd/user")
-scripts_installation_path=("/usr/local/bin" "home/$(whoami)/.local/bin")
+scripts_installation_path=("/usr/local/bin" "/home/$(whoami)/.local/bin")
 user_services_installation_path=""
 user_scripts_installation_path=""
 
 ###############################################
-## SCRIPT NAMES
+## SCRIPT/SERVICE NAMES
 ###############################################
 screen_time_notifier_timer_scriptname="screen_time_notifier_timer.sh"
 
+screen_time_timer_servicename="screen_time_timer.service"
+screen_time_timer_timername="screen_time_timer.timer"
 ######################################
 ## FUNCTIONS
 ######################################
@@ -65,9 +68,31 @@ CheckOnlyNumbers()
     fi
 }
 
+##Arg1 -> nombre archivo / Arg2 -> array con contenido archivo
 ServiceFilesCreator()
 {
-    echo "menudo vago soy"
+    local filename="$1"
+    local output_path
+    shift
+
+    if [ "$isRootUser" == "true" ]; then
+        output_path="${services_installation_path[0]}/$filename"
+        printf "%s\n" "$@" | sudo tee "$output_path"
+    else
+        output_path="${services_installation_path[1]}/$filename"
+        printf "%s\n" "$@" > "$output_path"
+    fi
+
+    echo "Created File: $output_path"
+}
+
+## Arg1 -> script names to copy
+CopyServiceScripts()
+{
+    for script in "$@"
+    do
+        echo "search script name, look if exists, and copy them $script"
+    done
 }
 
 ScreenNotificationTimerBuildService()
@@ -76,24 +101,38 @@ ScreenNotificationTimerBuildService()
     local service_type
     local service_exec_start
     local service_restart
-    local service_wanted_by
+    local install_wanted_by
 
     if [ "$isRootUser" == "true" ]; then
         service_exec_start="${scripts_installation_path[0]}/$screen_time_notifier_timer_scriptname"
-        service_wanted_by="multi-user.target"
+        install_wanted_by="multi-user.target"
     else
         service_exec_start="${scripts_installation_path[1]}/$screen_time_notifier_timer_scriptname"
-        service_wanted_by="default.target"
+        install_wanted_by="default.target"
     fi
 
     $dialog_separator
     read -e -i "Screen Time Notifier Service" -p "Service Description: " unit_description
     read -e -i "simple" -p "Type: " service_type
-    echo "ExecStart: $service_exec_start"
+    echo "ExecStart: $service_exec_start" >&2
     read -e -i "on-failure" -p "Restart: " service_restart
-    echo "WantedBy: $service_wanted_by"
+    echo "WantedBy: $install_wanted_by" >&2
     $dialog_separator
 
+    local tmp_array=(
+        "$unit_section"
+        "${description}${unit_description}"
+        "$separation"
+        "$service_section"
+        "${type}${service_type}"
+        "${exec_start}${service_exec_start}"
+        "${restart}${service_restart}"
+        "$separation"
+        "$install_section"
+        "${wanted_by}${install_wanted_by}"
+    )
+    
+    printf "%s\n" "${tmp_array[@]}"
 }
 
 ScreenNotificationTimerBuildTimer()
@@ -103,7 +142,7 @@ ScreenNotificationTimerBuildTimer()
     local timer_on_unit_active_sec
     local install_wanted_by
 
-    if [ "$isRootUser" == true ]; then
+    if [ "$isRootUser" == "true" ]; then
         install_wanted_by="multi-user.target"
     else
         install_wanted_by="default.target"
@@ -113,8 +152,22 @@ ScreenNotificationTimerBuildTimer()
     read -e -i "Screen Time Notifier Timer" -p "Description: " unit_description
     read -e -i "1min" -p "OnBootSec: " timer_on_boot_sec
     read -e -i "20min" -p "OnUnitActiveSec: " timer_on_unit_active_sec
-    echo "WantedBy: $install_wanted_by"
+    echo "WantedBy: $install_wanted_by" >&2
+    $dialog_separator
 
+    local tmp_array=(
+        "$unit_section"
+        "${description}${unit_description}"
+        "$separation"
+        "$timer_section"
+        "${on_boot_sec}${timer_on_boot_sec}"
+        "${on_unit_active_sec}${timer_on_unit_active_sec}"
+        "$separation"
+        "$install_section"
+        "${wanted_by}${install_wanted_by}"
+    )
+
+    printf "%s\n" "${tmp_array[@]}"
 }
 
 ##############################################
@@ -159,7 +212,14 @@ if [ "$serviceOption" -eq 1 ]; then
     if [ "$notificationOption" -eq 1 ]; then
 
         echo "Creating the service that executes the notification script..."
-        ScreenNotificationTimerBuildService
+        readarray -t service_content < <(ScreenNotificationTimerBuildService)
+        ServiceFilesCreator "$screen_time_timer_servicename" "${service_content[@]}"
+        
+        $dialog_separator
+
+        echo "Creating the timer that executes the service..."
+        readarray -t service_content < <(ScreenNotificationTimerBuildTimer)
+        ServiceFilesCreator "$screen_time_timer_timername" "${service_content[@]}"
     
     else
         ErrorExit "Option selected no valid"
