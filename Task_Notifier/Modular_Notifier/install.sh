@@ -29,6 +29,7 @@ isRootUser="false"
 dialog_separator="echo """
 build_archive_result=""
 
+# service_scripts_path="$(pwd)/services_scripts"
 services_installation_path=("/etc/systemd/system" "/home/$(whoami)/.config/systemd/user")
 scripts_installation_path=("/usr/local/bin" "/home/$(whoami)/.local/bin")
 user_services_installation_path=""
@@ -86,12 +87,26 @@ ServiceFilesCreator()
     echo "Created File: $output_path"
 }
 
+ServiceActivator()
+{
+    echo "Activar servicios"
+}
+
 ## Arg1 -> script names to copy
 CopyServiceScripts()
 {
+    local service_scripts_dest
+
+    if [ "$isRootUser" == "true" ]; then
+        service_scripts_dest="${scripts_installation_path[1]}"
+    else
+        service_scripts_dest="${scripts_installation_path[0]}"
+    fi
+
     for script in "$@"
     do
         echo "search script name, look if exists, and copy them $script"
+        cp "$(realpath "$script")" "$service_scripts_dest"
     done
 }
 
