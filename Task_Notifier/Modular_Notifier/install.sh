@@ -31,7 +31,11 @@ dialog_separator="echo """
 build_archive_result=""
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # service_scripts_path="$(pwd)/services_scripts"
+=======
+scripts_library_path="$(pwd)/services_scripts"
+>>>>>>> Stashed changes
 =======
 scripts_library_path="$(pwd)/services_scripts"
 >>>>>>> Stashed changes
@@ -101,6 +105,7 @@ ServiceActivator()
 CopyServiceScripts()
 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     local service_scripts_dest
 
     if [ "$isRootUser" == "true" ]; then
@@ -108,20 +113,29 @@ CopyServiceScripts()
     else
         service_scripts_dest="${scripts_installation_path[0]}"
 =======
+=======
+>>>>>>> Stashed changes
     local scripts_dest
 
     if [ "$isRootUser" == "true" ]; then
         scripts_dest="${scripts_installation_path[0]}"
     else
         scripts_dest="${scripts_installation_path[1]}"
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     fi
 
     for script in "$@"
     do
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         echo "search script name, look if exists, and copy them $script"
         cp "$(realpath "$script")" "$service_scripts_dest"
+=======
+        cp "$scripts_library_path/$script" "$scripts_dest"
+>>>>>>> Stashed changes
 =======
         cp "$scripts_library_path/$script" "$scripts_dest"
 >>>>>>> Stashed changes
