@@ -4,6 +4,7 @@
 ## IDEAS
 ####################################
 #1.-Para montar los archivos hacer alguna funcion estilo for que pase por todo lo que tiene que escribir y la llamada sea algo como (funcion "$unit_section" "enter" "$description{$inputUsuario}" ")
+#2.-Al activar los servicios, preguntar al usuario si los quiere enable, para iniciar al arranque (incluso si les quiere hacer start ahora)
 
 #################################################
 ## MODULAR BLOCKS
@@ -29,7 +30,11 @@ isRootUser="false"
 dialog_separator="echo """
 build_archive_result=""
 
+<<<<<<< Updated upstream
 # service_scripts_path="$(pwd)/services_scripts"
+=======
+scripts_library_path="$(pwd)/services_scripts"
+>>>>>>> Stashed changes
 services_installation_path=("/etc/systemd/system" "/home/$(whoami)/.config/systemd/user")
 scripts_installation_path=("/usr/local/bin" "/home/$(whoami)/.local/bin")
 user_services_installation_path=""
@@ -95,19 +100,54 @@ ServiceActivator()
 ## Arg1 -> script names to copy
 CopyServiceScripts()
 {
+<<<<<<< Updated upstream
     local service_scripts_dest
 
     if [ "$isRootUser" == "true" ]; then
         service_scripts_dest="${scripts_installation_path[1]}"
     else
         service_scripts_dest="${scripts_installation_path[0]}"
+=======
+    local scripts_dest
+
+    if [ "$isRootUser" == "true" ]; then
+        scripts_dest="${scripts_installation_path[0]}"
+    else
+        scripts_dest="${scripts_installation_path[1]}"
+>>>>>>> Stashed changes
     fi
 
     for script in "$@"
     do
+<<<<<<< Updated upstream
         echo "search script name, look if exists, and copy them $script"
         cp "$(realpath "$script")" "$service_scripts_dest"
+=======
+        cp "$scripts_library_path/$script" "$scripts_dest"
+>>>>>>> Stashed changes
     done
+}
+
+## Arg1 -> service names
+ActiveServices()
+{
+    if [ "$isRootUser" == "true" ]; then
+        sudo systemctl daemon-reload
+ 
+        for service in "$@"
+        do
+            sudo systemctl enable "$service"
+            sudo systemctl start "$service"
+        done
+    else
+        systemctl --user daemon-reload
+
+        for service in "$@"
+        do
+            systemctl --user enable "$service"
+            systemctl --user start "$service"
+        done
+    fi
 }
 
 ScreenNotificationTimerBuildService()
@@ -235,6 +275,16 @@ if [ "$serviceOption" -eq 1 ]; then
         echo "Creating the timer that executes the service..."
         readarray -t service_content < <(ScreenNotificationTimerBuildTimer)
         ServiceFilesCreator "$screen_time_timer_timername" "${service_content[@]}"
+
+        $dialog_separator
+
+        echo "Moving necessary scripts for services"
+        CopyServiceScripts "$screen_time_notifier_timer_scriptname"
+
+        $dialog_separator
+
+        echo "Activating services"
+        ActiveServices "$screen_time_timer_servicename" "$screen_time_timer_timername"
     
     else
         ErrorExit "Option selected no valid"
