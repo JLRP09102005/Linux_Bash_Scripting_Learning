@@ -15,3 +15,10 @@ requiere_root()
         return 0
     fi
 }
+
+## VALIDATIONS
+#Arg1 -> num to check
+check_numeric_positive()
+{
+    [[ "$1" =~ ^[0-9]+$ ]]
+}

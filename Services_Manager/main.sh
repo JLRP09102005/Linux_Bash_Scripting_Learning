@@ -44,12 +44,42 @@ menu_modules()
 # Main Menu
 main_menu()
 {
-    local option=0
+    local option=-1
 
-    while [ "$option" -eq 0 ]; do
+    while [ "$option" -ne 0 ]; do
+        clear
         print_header
 
-        cat 
+        cat << "EOF"
+        
+===============MAIN MENU===============
+
+        [1] Execute Modules
+        [2] Check Active Services
+        [3] Manage Data Base
+        [4] Manage Modules
+        [5] Check System Logs
+
+        [0] Exit
+        
+EOF
+    print_divider
+
+    read -p "Choose One Option: " option
+
+    if [ "$option" -eq 1 ]; then
+        print_info "Execute Modules"
+        press_enter_continue
+    elif [ "$option" -eq 2 ]; then
+        print_info "Check Active Services"
+        press_enter_continue
+    elif [ "$option" -eq 0 ]; then
+        print_info "Exit Script"
+        press_enter_continue
+    else
+        print_warning "Make sure to choose a correct option"
+        press_enter_continue
+    fi
 
     done
 }

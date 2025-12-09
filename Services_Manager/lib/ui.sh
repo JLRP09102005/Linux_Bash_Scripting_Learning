@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Colors
+## COLORS
 NC="\033[0m"
 
 BLACK="\033[0;30m"
@@ -30,7 +30,7 @@ BACKGROUND_MAGENTA="\033[0;45m"
 BACKGROUND_CYAN="\033[0;46m"
 BACKGROUND_WHITE="\033[0;47m"
 
-## Messages
+## MESSAGES
 #Arg1 -> text to print
 print_success()
 {
@@ -84,7 +84,21 @@ EOF
     echo -e "${NC}"
 }
 
-## Decoration
+## INTERACTION
+press_enter_continue()
+{
+    echo ""
+    read -p "Press enter to continue..."
+}
+
+confirm()
+{
+    local message="$1"
+    read -p "$message (y/n): " response
+    [[ "$response" =~ ^[yY]([eE][sS])?$ ]]
+}
+
+## DECORATION
 #Arg1 -> time to wait
 wait_time()
 {
