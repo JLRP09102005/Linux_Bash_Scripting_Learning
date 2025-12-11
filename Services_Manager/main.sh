@@ -38,20 +38,56 @@ load_modules()
 # Selection Module Menu
 menu_modules()
 {
-    echo "print modules"
+    declare -i option=-1
+
+    while [ "$option" -ne 0 ]; do
+        local modules=()
+        local i=1
+
+        readarray -t modules < <(list_available_modules)
+        # modules=($(list_available_modules))
+        
+        clear
+        print_header
+
+        echo "===============MODULES MANAGEMENT==============="
+        for module in "${modules[@]}"; do
+            if module_loaded "$module"; then
+                echo "[$i] $module (loaded)"
+            else
+                echo "[$i] $module (avaible)"
+            fi
+
+            ((i++))
+        done
+        echo "[0] Exit"
+        print_divider
+
+        read -p "Choose One Option: " option
+
+        if [[ "$option" -gt 0 && "$option" -lt "$i" ]]; then
+            echo "save the i"
+            press_enter_continue
+        elif [ "$option" -eq 0 ]; then
+            print_info "Exiting"
+            wait_time 0,5
+        else
+            print_warning "Make sure to choose a correct option"
+            press_enter_continue
+        fi
+    done
 }
 
 # Main Menu
 main_menu()
 {
-    local option=-1
+    declare -i option=-1
 
     while [ "$option" -ne 0 ]; do
         clear
         print_header
 
-        cat << "EOF"
-        
+        cat << "EOF"   
 ===============MAIN MENU===============
 
         [1] Execute Modules
@@ -68,14 +104,21 @@ EOF
     read -p "Choose One Option: " option
 
     if [ "$option" -eq 1 ]; then
-        print_info "Execute Modules"
-        press_enter_continue
+        menu_modules
     elif [ "$option" -eq 2 ]; then
         print_info "Check Active Services"
         press_enter_continue
+    elif [ "$option" -eq 3 ]; then
+        print_info "Manage Data Base"
+        press_enter_continue
+    elif [ "$option" -eq 4 ]; then
+        print_info "Manage Modules"
+        press_enter_continue
+    elif [ "$option" -eq 5 ]; then
+        print_info "Check System Logs"
+        press_enter_continue
     elif [ "$option" -eq 0 ]; then
         print_info "Exit Script"
-        press_enter_continue
     else
         print_warning "Make sure to choose a correct option"
         press_enter_continue
