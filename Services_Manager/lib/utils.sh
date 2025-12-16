@@ -40,7 +40,7 @@ list_available_modules()
 
     for module in "$modules_dir"/*.sh; do
         if [ -f "$module" ]; then
-            module_name=$(basename "$module" | tr -d ".sh")    # module_name=$(basename "$module" .sh)
+            module_name=$(basename "$module" .sh)
             modules+=("$module_name")
         fi
     done

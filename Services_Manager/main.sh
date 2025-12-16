@@ -24,7 +24,7 @@ load_libraries()
 load_modules()
 {
     local modules_dir="$MODULES_DIRECTORY"
-    local mmodule_name
+    local module_name
 
     for module in "$modules_dir"/*.sh; do
         if [ -f "$module" ]; then
@@ -66,14 +66,26 @@ menu_modules()
         read -p "Choose One Option: " option
 
         if [[ "$option" -gt 0 && "$option" -lt "$i" ]]; then
-            echo "save the i"
-            press_enter_continue
+
+            local selected_module="${modules[$((option -1))]}"
+
+            if declare -F "${selected_module}_menu" >/dev/null 2>&1; then
+                "${selected_module}_menu"
+            else
+                print_error "The module $selected_module isn't loaded"
+                press_enter_continue
+            fi
+
         elif [ "$option" -eq 0 ]; then
-            print_info "Exiting"
-            wait_time 0,5
+
+            print_info "Exiting Modules Management"
+            wait_time 1
+        
         else
+        
             print_warning "Make sure to choose a correct option"
             press_enter_continue
+        
         fi
     done
 }
@@ -118,7 +130,8 @@ EOF
         print_info "Check System Logs"
         press_enter_continue
     elif [ "$option" -eq 0 ]; then
-        print_info "Exit Script"
+        print_info "Exiting Script..."
+        wait_time 1.5
     else
         print_warning "Make sure to choose a correct option"
         press_enter_continue
