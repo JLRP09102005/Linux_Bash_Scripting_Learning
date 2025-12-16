@@ -35,6 +35,9 @@ load_modules()
     done
 }
 
+# Setup Services Database (if not exists)
+source "$BASE_DIRECTORY/setup.sh"
+
 # Selection Module Menu
 menu_modules()
 {
