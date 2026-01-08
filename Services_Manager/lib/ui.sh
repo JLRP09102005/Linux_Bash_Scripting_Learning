@@ -34,31 +34,31 @@ BACKGROUND_WHITE="\033[0;47m"
 #Arg1 -> text to print
 print_success()
 {
-    echo -e "${BOLD_GREEN}SUCCESS${NC} $1"
+    echo -e "${BOLD_GREEN}SUCCESS${NC} $1" >&2
 }
 
 #Arg1 -> text to print
 print_error()
 {
-    echo -e "${BOLD_RED}ERROR${NC} $1"
+    echo -e "${BOLD_RED}ERROR${NC} $1" >&2
 }
 
 #Arg1 -> text to print
 print_failed()
 {
-    echo -e "${BOLD_RED}FAILED${NC} $1"
+    echo -e "${BOLD_RED}FAILED${NC} $1" >&2
 }
 
 #Arg1 -> text to print
 print_warning()
 {
-    echo -e "${BOLD_YELLOW}WARNING${NC} $1"
+    echo -e "${BOLD_YELLOW}WARNING${NC} $1" >&2
 }
 
 #Arg1 -> text to print
 print_info()
 {
-    echo -e "${BOLD_BLUE}INFO${NC} $1"
+    echo -e "${BOLD_BLUE}INFO${NC} $1" >&2
 }
 
 print_header()

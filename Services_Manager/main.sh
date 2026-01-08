@@ -3,7 +3,14 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Load config file
-source "$SCRIPT_DIR/config/config.sh"
+if [ -f "$SCRIPT_DIR/config/config.sh" ]; then
+    source "$SCRIPT_DIR/config/config.sh"
+fi
+
+# Load setup file
+if [ -f "$BASE_DIRECTORY/setup.sh" ]; then
+    source "$BASE_DIRECTORY/setup.sh"
+fi
 
 # Load libraries
 load_libraries()
@@ -109,7 +116,8 @@ main_menu()
         [2] Check Active Services
         [3] Manage Data Base
         [4] Manage Modules
-        [5] Check System Logs
+        [5] Start Setup
+        [6] Check System Logs
 
         [0] Exit
         
@@ -130,8 +138,9 @@ EOF
         print_info "Manage Modules"
         press_enter_continue
     elif [ "$option" -eq 5 ]; then
+        start_setup
+    elif [ "$option" -eq 6 ]; then
         print_info "Check System Logs"
-        press_enter_continue
     elif [ "$option" -eq 0 ]; then
         print_info "Exiting Script..."
         wait_time 1.5
