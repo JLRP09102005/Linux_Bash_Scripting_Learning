@@ -61,6 +61,7 @@ execute_query_as_root()
 db_create_credentials()
 {
     if ! mysql_is_installed || ! mysql_service_is_running; then
+        print_warning "Please, be sure that you have mysql installed and running"
         return 1
     fi
 
@@ -84,7 +85,9 @@ db_create_credentials()
 db_creation()
 {
     if ! mysql_general_check; then
-        return 1;
+        print_warning "Please, check if mysql is installed, is running and the credentials at config.sh are correct"
+        wait_time 5
+        return 1
     fi
 
     ask_mysql_root_passwd
@@ -220,6 +223,11 @@ db_creation()
     ALTER TABLE service_logs
     ADD created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
     execute_query "$query"
+
+    # #Insert user into database
+    # query="
+    # INSERT INTO users(*)
+    # VALUES ("$")"
 }
 
 #===== DATABASE INITIALIZATION =====
@@ -227,6 +235,8 @@ db_creation()
 db_init()
 {
     if ! mysql_general_check; then
+        print_warning "Please, check if mysql is installed, is running and the credentials at config.sh are correct"
+        wait_time 5
         return 1
     fi
 
@@ -340,3 +350,57 @@ ask_mysql_root_passwd()
 }
 
 #===== CRUD OPERATIONS - SERVICES =====
+#Arg1 --> name / Arg2 --> status / Arg3 --> host / Arg4 --> type / Arg5 --> user_id / Arg6 --> description / Arg7 --> image / Arg8 --> config_path
+db_add_service()
+{
+    if [ $# -lt 1 ]; then
+        print_error "Add service function haven't received at least 1 argument"
+        return 1
+    fi
+
+    if ! mysql_general_check; then
+        print_warning "Please, check if mysql is installed, is running and the credentials at config.sh are correct"
+        wait_time 5
+        return 1
+    fi
+
+    local name="$1"
+    local status="$2"
+    local host="$3"
+    local type="$4"
+    local user_id="$5"
+    local description="$6"
+    local image="$7"
+    local config_path="$8"
+
+    status="${status:="stopped"}"
+    host="${host:="localhost"}"
+    type="${type:=0}"
+    user_id="${user_id:=0}"
+
+
+}
+
+#Arg1 --> username / Arg2 --> full name / Arg3 --> email
+db_add_user()
+{
+    if [ $# -lt 1 ]; then
+        print_error "Add user function haven't received at least 1 argument"
+        return 1
+    fi
+
+    if ! mysql_general_check; then
+        print_warning "Please, check if mysql is installed, is running and the credentials at config.sh are correct"
+        wait_time 5
+        return 1
+    fi
+
+    local username="$1"
+    local full_name="$2"
+    local email="$3"
+
+    query="
+    INSERT INTO services_db.users (username, full_name, email)
+    VALUES('$username','$full_name','$email');" #--> VALUES(\"$username\",\"$full_name\",\"$email\")
+    execute_query "$query"
+}

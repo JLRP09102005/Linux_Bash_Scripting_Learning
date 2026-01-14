@@ -1,0 +1,5 @@
+--------------
+CREATE USER 'serviceuser'@'localhost' IDENTIFIED BY 'serviceuser123'
+--------------
+
+ERROR 1396 (HY000) at line 2: Operation CREATE USER failed for 'serviceuser'@'localhost'

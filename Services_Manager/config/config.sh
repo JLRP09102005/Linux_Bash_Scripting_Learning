@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #===== System Info =====
-# shellcheck disable=SC2034
 SYSTEM_NAME="Service Manager System"
 SYSTEM_VERSION="1.0.0"
 SYSTEM_AUTHOR="jjolisrp"
@@ -17,6 +16,13 @@ BACKUPS_DIRECTORY="$BASE_DIRECTORY/backups"
 #===== MYSQL CONFIGURATION =====
 DB_HOST="localhost"
 DB_USER="serviceuser"
+DB_USER_EMAIL="serviceuser@example.com"
+DB_USER_FULLNAME="Lorem Ipsum Dolor"
 DB_PASSWD="serviceuser123"
 DB_PORT="3306"
 DB_NAME="services_db"
+
+#===== User Data =====
+USER_USERNAME="default"
+USER_EMAIL="default@example.com"
+USER_FULLNAME="Lorem Ipsum Dolor"
