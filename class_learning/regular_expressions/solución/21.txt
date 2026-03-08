@@ -1,0 +1,11 @@
+LTS
+Release
+focal
+main
+restricted
+See
+for
+how
+to
+upgrade
+to
