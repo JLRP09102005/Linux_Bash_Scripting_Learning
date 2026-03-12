@@ -1,0 +1,10 @@
+     15 the
+     11 deb
+     10 main
+      9 universe
+      9 restricted
+      9 multiverse
+      9 focal
+      8 software
+      7 to
+      7 from

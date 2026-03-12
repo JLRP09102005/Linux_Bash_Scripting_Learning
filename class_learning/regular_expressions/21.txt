@@ -1,0 +1,12 @@
+LTS
+Release
+amd64
+focal
+main
+restricted
+See
+for
+how
+to
+upgrade
+to

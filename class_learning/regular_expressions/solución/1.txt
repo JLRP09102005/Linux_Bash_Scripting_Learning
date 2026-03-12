@@ -1,3 +1,0 @@
-sssd:x:126:131:SSSD system user,,,:/var/lib/sss:/usr/sbin/nologin
-weaver:x:1000:1000:weaver,,,:/home/weaver:/bin/bash
-systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
